@@ -6,6 +6,7 @@ from django.http import HttpRequest
 from lists.models import Item, List
 from lists.views import home_page
 
+
 class HomePageTest(TestCase):
 
     def test_root_url_resolves_to_home_page_view(self):
@@ -18,6 +19,7 @@ class HomePageTest(TestCase):
         expected_html = render_to_string('home.html')
         self.assertEqual(response.content.decode(), expected_html)
 
+
 class ListandItemModelsTest(TestCase):
 
     def test_saving_and_retrieving_items(self):
@@ -28,7 +30,7 @@ class ListandItemModelsTest(TestCase):
         first_item.text = 'The first (ever) list item'
         first_item.list = list_
         first_item.save()
-  
+
         second_item = Item()
         second_item.text = 'Item the second'
         second_item.list = list_
@@ -47,13 +49,14 @@ class ListandItemModelsTest(TestCase):
         self.assertEqual(second_saved_item.text, 'Item the second')
         self.assertEqual(second_saved_item.list, list_)
 
+
 class ListViewTest(TestCase):
 
     def test_uses_list_template(self):
         list_ = List.objects.create()
         response = self.client.get('/lists/%d/' % (list_.id,))
         self.assertTemplateUsed(response, 'list.html')
-        
+
     def test_displays_only_items_for_that_list(self):
         correct_list = List.objects.create()
         Item.objects.create(text='itemey 1', list=correct_list)
@@ -69,12 +72,13 @@ class ListViewTest(TestCase):
         self.assertNotContains(response, 'other list item 1')
         self.assertNotContains(response, 'other list item 2')
 
+
 class NewListTest(TestCase):
 
     def test_saving_a_POST_request(self):
         self.client.post(
             '/lists/new',
-             data={'item_text': 'A new list item'}
+            data={'item_text': 'A new list item'}
         )
         self.assertEqual(Item.objects.count(), 1)
         new_item = Item.objects.first()
@@ -87,7 +91,8 @@ class NewListTest(TestCase):
         )
         new_list = List.objects.first()
         self.assertRedirects(response, '/lists/%d/' % (new_list.id,))
-        
+
+
 class NewItemTest(TestCase):
 
     def test_can_save_a_POST_request_to_an_existing_list(self):
